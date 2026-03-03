@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Holi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg,#ffffff,#ffe6f0);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.4);
+            text-align: center;
+            animation: popIn 1s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .popup h2 {
+            color: #ff1493;
+        }
+
+        .popup input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ff69b4;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .popup button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg,#ff0080,#ff8c00);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .popup button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ff0080;
+        }
+
+        .holi-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        #greeting {
+            font-size: 50px;
+            text-shadow: 0 0 20px #000;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #ff0080; }
+            to { text-shadow: 0 0 20px #fff, 0 0 40px #ff8c00; }
+        }
+
+        #quote {
+            font-size: 22px;
+            margin-top: 20px;
+            width: 80%;
+            animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .extra-line {
+            font-size: 18px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div id="popup" class="popup">
+    <h2>🌸 Enter Your Name 🌸</h2>
+    <input type="text" id="name" placeholder="Your Name">
+    <br>
+    <button id="submit">Celebrate 🎉</button>
+</div>
+
+<div id="holi-page" class="holi-page">
+    <h1 id="greeting"></h1>
+    <canvas id="canvas"></canvas>
+    <p id="quote"></p>
+    <div id="extra"></div>
+</div>
+
+<script>
+const popup = document.getElementById('popup');
+const holiPage = document.getElementById('holi-page');
+const nameInput = document.getElementById('name');
+const submitButton = document.getElementById('submit');
+const greeting = document.getElementById('greeting');
+const canvas = document.getElementById('canvas');
+const quote = document.getElementById('quote');
+const extra = document.getElementById('extra');
+
+const quotes = [
+"May your life be as colorful as Holi! 🌈",
+"Let the colors of happiness brighten your year! ✨",
+"Play safe, laugh loud, love deeply! 💖",
+"Fill your heart with joy and your life with colors! 🎨",
+"Celebrate life with vibrant positivity! 🌸",
+"Smile, sparkle and shine this Holi! 💫",
+"Colors fade but memories stay forever! 🎊",
+"Spread love like colors in the air! 🌼",
+"Every color tells a story of happiness! 🌺",
+"Make today ridiculously amazing! 🎉"
+];
+
+const extraLines = [
+"May success splash upon you like bright gulal!",
+"Let positivity explode like color bombs!",
+"Today is the day to forget worries and celebrate joy!",
+"Holi reminds us that life should be lived in full color!",
+"Dance in colors, laugh in colors, live in colors!"
+];
+
+submitButton.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    if (name) {
+        popup.style.display = 'none';
+        holiPage.style.display = 'flex';
+
+        greeting.innerText = `Happy Holi, ${name}! 🌈`;
+        quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        extra.innerHTML = "";
+
+        extraLines.forEach(line => {
+            const p = document.createElement("p");
+            p.className = "extra-line";
+            p.innerText = line;
+            extra.appendChild(p);
+        });
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const colors = ['#FF1493','#00FFFF','#FFD700','#FF4500','#7CFC00','#8A2BE2'];
+        let particles = [];
+
+        for (let i = 0; i < 200; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: Math.random() * 4 - 2,
+                vy: Math.random() * 4 - 2,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                radius: Math.random() * 6 + 2
+            });
+        }
+
+        function animate() {
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.fill();
+
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+
+                if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -1;
+                if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -1;
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        setInterval(() => {
+            quote.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        }, 4000);
+    }
+});
+</script>
+
+</body>
+</html>
